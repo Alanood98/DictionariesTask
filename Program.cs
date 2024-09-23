@@ -5,6 +5,8 @@ namespace Dictionaries
 {
     internal class Program
     {
+        // Dictionary to store courses and enrolled students
+        static Dictionary<string, HashSet<string>> courses = new Dictionary<string, HashSet<string>>();
         static void Main(string[] args)
         {
 
