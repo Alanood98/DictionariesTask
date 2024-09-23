@@ -73,7 +73,27 @@ namespace Dictionaries
 
         }
 
-
+        // Function to enroll a student in a course
+        static void EnrollStudentInCourse (string courseCode, string studentName)
+        {
+            Console.WriteLine("Enter the student name (or press any key to stop):");
+            string studentName = Console.ReadLine();
+            if (courses.ContainsKey(courseCode))
+            {
+                if (courses[courseCode].Add(studentName))
+                {
+                    Console.WriteLine($"{studentName} enrolled in {courseCode}.");
+                }
+                else
+                {
+                    Console.WriteLine($"{studentName} is already enrolled in {courseCode}.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Course {courseCode} does not exist.");
+            }
+        }
 
 
 
