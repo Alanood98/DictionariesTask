@@ -56,6 +56,8 @@ namespace Dictionaries
             }
 
         }
+
+//************************************************************************************************************************
          static void AddNewCourse()
         {
             Console.WriteLine("Enter course code to add (or press any key to stop):");
@@ -73,11 +75,40 @@ namespace Dictionaries
 
         }
 
-        // Function to enroll a student in a course
-        static void EnrollStudentInCourse (string courseCode, string studentName)
+ //**************************************************************************************************************************
+
+        // Function to remove a course
+        static void RemoveCourse(string courseCode)
         {
-            Console.WriteLine("Enter the student name (or press any key to stop):");
-            string studentName = Console.ReadLine();
+            Console.WriteLine("Enter course code you want to remove it (or press any key to stop):");
+            string removeCourseName = Console.ReadLine();
+
+            if (courses.ContainsKey(courseCode))
+            {
+                // Check if the course has no enrolled students
+                if (courses[courseCode].Count == 0)
+                {
+                    courses.Remove(courseCode);
+                    Console.WriteLine($"Course {courseCode} removed.");
+                }
+                else
+                {
+                    // Inform the user that the course cannot be removed
+                    Console.WriteLine($"Cannot remove {courseCode} because it has enrolled students.");
+                }
+            }
+            else
+            {
+                // Inform the user that the course does not exist
+                Console.WriteLine($"Course {courseCode} does not exist.");
+            }
+        }
+
+        //********************************************************************************************************
+
+        // Function to enroll a student in a course
+        static void EnrollStudent(string courseCode, string studentName)
+        {
             if (courses.ContainsKey(courseCode))
             {
                 if (courses[courseCode].Add(studentName))
@@ -87,6 +118,28 @@ namespace Dictionaries
                 else
                 {
                     Console.WriteLine($"{studentName} is already enrolled in {courseCode}.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Course {courseCode} does not exist.");
+            }
+        }
+
+        //*****************************************************************************************************************
+
+        // Function to remove a student from a course
+        static void RemoveStudentFromCourse(string courseCode, string studentName)
+        {
+            if (courses.ContainsKey(courseCode))
+            {
+                if (courses[courseCode].Remove(studentName))
+                {
+                    Console.WriteLine($"{studentName} unenrolled from {courseCode}.");
+                }
+                else
+                {
+                    Console.WriteLine($"{studentName} is not enrolled in {courseCode}.");
                 }
             }
             else
