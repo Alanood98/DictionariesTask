@@ -5,12 +5,9 @@ namespace Dictionaries
 {
     internal class Program
     {
-        // Dictionary to store courses and enrolled students
         static Dictionary<string, HashSet<string>> courses = new Dictionary<string, HashSet<string>>();
         static List<(string studentName, string courseCode)> WaitList = new List<(string, string)>();
-        static Dictionary<string, int> courseCapacity = new Dictionary<string, int>(); // Stores course capacity
-        
-
+        static Dictionary<string, int> courseCapacity = new Dictionary<string, int>();
 
         static void Main(string[] args)
         {
@@ -40,22 +37,7 @@ namespace Dictionaries
                         EnrollStudentInCourse();
                         break;
                     case "4":
-                        // Prompt for course code and student name
-                        Console.WriteLine("Enter course code:");
-                        string courseCode = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(courseCode))
-                        {
-                            Console.WriteLine("Course code cannot be empty.");
-                            break;
-                        }
-
-                        Console.WriteLine("Enter student name:");
-                        string studentName = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(studentName))
-                        {
-                            Console.WriteLine("Student name cannot be empty.");
-                            
-                        }
+                        RemoveStudentFromCourse();
                         break;
                     case "5":
                         DisplayAllStudentsInCourse();
@@ -71,15 +53,14 @@ namespace Dictionaries
                         break;
                     case "9":
                         Console.WriteLine("Exiting the program.");
-                        return; // Exit the loop and program
+                        return;
                     default:
                         Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
             }
         }
-
-        //************************************************************************************************************************
+//*********************************************************************************************************************
         static void AddNewCourse()
         {
             Console.WriteLine("Enter course code to add:");
@@ -109,8 +90,7 @@ namespace Dictionaries
                 Console.WriteLine($"Course {courseCode} already exists.");
             }
         }
-
-        //**************************************************************************************************************************
+//***************************************************************************************************************
         static void RemoveCourse()
         {
             Console.WriteLine("Enter course code you want to remove:");
@@ -123,7 +103,6 @@ namespace Dictionaries
 
             if (courses.ContainsKey(courseCode))
             {
-                // Check if the course has no enrolled students
                 if (courses[courseCode].Count == 0)
                 {
                     courses.Remove(courseCode);
@@ -139,43 +118,36 @@ namespace Dictionaries
                 Console.WriteLine($"Course {courseCode} does not exist.");
             }
         }
-
-        //********************************************************************************************************
-        //static void EnrollStudentInCourse()
-        //{
-        //    Console.WriteLine("Enter course code:");
-        //    string courseCode = Console.ReadLine();
-        //    if (string.IsNullOrWhiteSpace(courseCode))
-        //    {
-        //        Console.WriteLine("Course code cannot be empty.");
-        //        return;
-        //    }
-
-        //    Console.WriteLine("Enter student name:");
-        //    string studentName = Console.ReadLine();
-        //    if (string.IsNullOrWhiteSpace(studentName))
-        //    {
-        //        Console.WriteLine("Student name cannot be empty.");
-        //        return;
-        //    }
-
-        //    EnrollStudent(courseCode, studentName);
-        //}
-
-        static void EnrollStudentInCourse(string courseCode, string studentName)
+//******************************************************************************************************************
+        static void EnrollStudentInCourse()
         {
+            Console.WriteLine("Enter course code:");
+            string courseCode = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(courseCode))
+            {
+                Console.WriteLine("Course code cannot be empty.");
+                return;
+            }
+
+            Console.WriteLine("Enter student name:");
+            string studentName = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(studentName))
+            {
+                Console.WriteLine("Student name cannot be empty.");
+                return;
+            }
+
             if (courses.ContainsKey(courseCode))
             {
-                // Check if the student is already enrolled in the course
                 if (courses[courseCode].Contains(studentName))
                 {
                     Console.WriteLine($"{studentName} is already enrolled in {courseCode}.");
-                    return; // Exit the method to prevent further enrollment
+                    return;
                 }
 
                 if (courses[courseCode].Count < courseCapacity[courseCode])
                 {
-                    courses[courseCode].Add(studentName); // Add student
+                    courses[courseCode].Add(studentName);
                     Console.WriteLine($"{studentName} enrolled in {courseCode}.");
                 }
                 else
@@ -189,23 +161,44 @@ namespace Dictionaries
                 Console.WriteLine($"Course {courseCode} does not exist.");
             }
         }
-        //*****************************************************************************************************************
-        static void RemoveStudentFromCourse(string courseCode, string studentName)
+//*****************************************************************************************************************
+        static void RemoveStudentFromCourse()
         {
+            Console.WriteLine("Enter course code:");
+            string courseCode = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(courseCode))
+            {
+                Console.WriteLine("Course code cannot be empty.");
+                return;
+            }
+
+            Console.WriteLine("Enter student name:");
+            string studentName = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(studentName))
+            {
+                Console.WriteLine("Student name cannot be empty.");
+                return;
+            }
+
             if (courses.ContainsKey(courseCode))
             {
                 if (courses[courseCode].Remove(studentName))
                 {
                     Console.WriteLine($"{studentName} unenrolled from {courseCode}.");
 
-                    // Check the waitlist for the next student using a loop instead of lambda
+                    // Check if there are students on the waitlist for this course
                     for (int i = 0; i < WaitList.Count; i++)
                     {
                         if (WaitList[i].courseCode == courseCode)
                         {
-                            EnrollStudentInCourse(WaitList[i].courseCode, WaitList[i].studentName);
-                            WaitList.RemoveAt(i); // Remove the student from the waitlist after enrolling
-                            break; // Exit the loop once we find and enroll the first student
+                            // Check if the course has room now
+                            if (courses[courseCode].Count < courseCapacity[courseCode])
+                            {
+                                courses[courseCode].Add(WaitList[i].studentName);
+                                Console.WriteLine($"{WaitList[i].studentName} has been enrolled in {courseCode} from the waitlist.");
+                                WaitList.RemoveAt(i);
+                            }
+                            break; // Only enroll one student from the waitlist
                         }
                     }
                 }
@@ -220,9 +213,7 @@ namespace Dictionaries
             }
         }
 
-
-
-        //***********************************************************************************************
+//**************************************************************************************************************************
         static void DisplayAllStudentsInCourse()
         {
             Console.WriteLine("Enter course code:");
@@ -247,7 +238,6 @@ namespace Dictionaries
             }
         }
 
-        //****************************************************************************************************
         static void DisplayAllCoursesAndTheirStudents()
         {
             Console.WriteLine("All Courses and Enrolled Students:");
@@ -261,7 +251,7 @@ namespace Dictionaries
             }
         }
 
-        //***************************************************************************************************************
+//**********************************************************************************************
         static void FindCoursesWithCommonStudents()
         {
             Console.WriteLine("Enter the first course code:");
@@ -304,7 +294,7 @@ namespace Dictionaries
             }
         }
 
-        //*************************************************************************************************************************************
+//***************************************************************************************************************
         static void WithdrawStudentFromAllCourses()
         {
             Console.WriteLine("Enter student name to withdraw:");
@@ -322,6 +312,17 @@ namespace Dictionaries
             Console.WriteLine($"{studentName} has been withdrawn from all courses.");
         }
 
+        //***************************************************************************************************************
+
+        //DisplayCoursesAndCapacities that will show the course codes along with their capacities.
+        static void DisplayCoursesAndCapacities()
+        {
+            Console.WriteLine("Available Courses and Their Capacities:");
+            foreach (var course in courseCapacity)
+            {
+                Console.WriteLine($"Course: {course.Key}, Capacity: {course.Value}");
+            }
+        }
 
     }
 }
