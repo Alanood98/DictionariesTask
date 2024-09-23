@@ -56,7 +56,22 @@ namespace Dictionaries
             }
 
         }
+         static void AddNewCourse()
+        {
+            Console.WriteLine("Enter course code to add (or press any key to stop):");
+            string coursCode = Console.ReadLine();
+            if (!courses.ContainsKey(coursCode))
+            {
+                courses[coursCode] = new HashSet<string>();
+                Console.WriteLine($"Course {coursCode} added.");
+            }
+            else
+            {
+                Console.WriteLine($"Course {coursCode} already exists.");
+            }
 
+
+        }
 
 
 
@@ -64,4 +79,4 @@ namespace Dictionaries
 
     }
 }
-}
+
