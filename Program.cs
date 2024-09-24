@@ -26,6 +26,7 @@ namespace Dictionaries
                 Console.WriteLine("6. Display all courses and their students");
                 Console.WriteLine("7. Find courses with common students");
                 Console.WriteLine("8. Withdraw a Student from All Courses");
+                Console.WriteLine("9. view wating list");
                 Console.WriteLine("0. Exit");
 
                 string choice = Console.ReadLine();
@@ -54,6 +55,9 @@ namespace Dictionaries
                         break;
                     case "8":
                         WithdrawStudentFromAllCourses();
+                        break;
+                        case "9":
+                        viewWatingList();
                         break;
                     case "0":
                         Console.WriteLine("Exiting the program.");
@@ -376,6 +380,25 @@ namespace Dictionaries
             WaitList.Add(("Eva", "ENG303"));    // Eva waiting for ENG303
             Console.WriteLine("Startup data initialized.");
         }
+        //******************************************************************************************************************
+
+        static void viewWatingList()
+        {
+            Console.WriteLine("Waiting List:");
+            if (WaitList.Count == 0)
+            {
+                Console.WriteLine("The waiting list is empty.");
+                return;
+            }
+
+            // Loop through the waiting list and print each student and course
+            foreach (var student in WaitList)
+            {
+                Console.WriteLine($"Student Name: {student.studentName}, Course Code: {student.courseCode}");
+            }
+        
+    }
+
 
     }
 }
