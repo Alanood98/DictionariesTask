@@ -333,25 +333,52 @@ namespace Dictionaries
 
         //***************************************************************************************************************
         static void WithdrawStudentFromAllCourses()
+    {
+        Console.WriteLine("Enter student name to withdraw:");
+        string studentName = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(studentName))
         {
-            Console.WriteLine("Enter student name to withdraw:");
-            string studentName = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(studentName))
-            {
-                Console.WriteLine("Student name cannot be empty.");
-                return;
-            }
-
-            foreach (var course in courses.Keys)
-            {
-                courses[course].Remove(studentName);
-            }
-            Console.WriteLine($"{studentName} has been withdrawn from all courses.");
+            Console.WriteLine("Student name cannot be empty.");
+            return;
         }
 
-        //***************************************************************************************************************
+        // Track courses the student is enrolled in
+        List<string> enrolledCourses = new List<string>();
 
-        //DisplayCoursesAndCapacities that will show the course codes along with their capacities.
+        // Withdraw the student from all courses and track enrolled courses
+        foreach (var course in courses.Keys)
+        {
+            if (courses[course].Contains(studentName))
+            {
+                enrolledCourses.Add(course); // Record the courses the student is enrolled in
+                courses[course].Remove(studentName); // Remove the student from the course
+            }
+        }
+
+        // Notify about withdrawal
+        Console.WriteLine($"{studentName} has been withdrawn from all courses.");
+
+        // Now, check for waiting students for each of the courses the withdrawn student was enrolled in
+        foreach (var course in enrolledCourses)
+        {
+            // Check for waiting students for the current course
+            for (int i = 0; i < WaitList.Count; i++)
+            {
+                if (WaitList[i].courseCode.Equals(course, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Enroll the waiting student into the course
+                    courses[course].Add(WaitList[i].studentName);
+                    Console.WriteLine($"{WaitList[i].studentName} has been added to {course} from the waiting list.");
+
+                    // Remove the waiting student from the waiting list
+                    WaitList.RemoveAt(i);
+                    break; // Break to prevent checking the same course again
+                }
+            }
+        }
+    }
+
+        //***********************************************************************************************************
         static void DisplayCoursesAndCapacities()
         {
             Console.WriteLine("Available Courses and Their Capacities:");
@@ -396,9 +423,8 @@ namespace Dictionaries
             {
                 Console.WriteLine($"Student Name: {student.studentName}, Course Code: {student.courseCode}");
             }
-        
-    }
+        }
 
 
-    }
+        }
 }
