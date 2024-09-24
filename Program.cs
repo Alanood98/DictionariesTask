@@ -11,6 +11,10 @@ namespace Dictionaries
 
         static void Main(string[] args)
         {
+            InitializeStartupData();
+
+
+
             while (true)
             {
                 Console.WriteLine("\nCourse Enrollment System ");
@@ -22,7 +26,7 @@ namespace Dictionaries
                 Console.WriteLine("6. Display all courses and their students");
                 Console.WriteLine("7. Find courses with common students");
                 Console.WriteLine("8. Withdraw a Student from All Courses");
-                Console.WriteLine("9. Exit");
+                Console.WriteLine("0. Exit");
 
                 string choice = Console.ReadLine();
                 switch (choice)
@@ -51,7 +55,7 @@ namespace Dictionaries
                     case "8":
                         WithdrawStudentFromAllCourses();
                         break;
-                    case "9":
+                    case "0":
                         Console.WriteLine("Exiting the program.");
                         return;
                     default:
@@ -72,21 +76,24 @@ namespace Dictionaries
             }
             if (!courses.ContainsKey(courseCode))
             {
-                courses[courseCode] = new HashSet<string>();
+                courses[courseCode] = new HashSet<string>();//used to store additional details (e.g., student names )
 
                 Console.WriteLine("Enter the course capacity:");
                 if (int.TryParse(Console.ReadLine(), out int capacity) && capacity > 0)
                 {
+                    //Store the Capacity 
                     courseCapacity[courseCode] = capacity;
                     Console.WriteLine($"Course {courseCode} added with a capacity of {capacity}.");
                 }
                 else
                 {
+                    
                     Console.WriteLine("Invalid capacity. Course not added.");
                 }
             }
             else
             {
+                //Handle Duplicate Course Code:
                 Console.WriteLine($"Course {courseCode} already exists.");
             }
         }
@@ -100,12 +107,15 @@ namespace Dictionaries
                 Console.WriteLine("Course code cannot be empty.");
                 return;
             }
-
+            //Check if the Course Exists
             if (courses.ContainsKey(courseCode))
             {
+
+                //Check if the Course has Enrolled Students
                 if (courses[courseCode].Count == 0)
                 {
                     courses.Remove(courseCode);
+                    courseCapacity.Remove(courseCode);  
                     Console.WriteLine($"Course {courseCode} removed.");
                 }
                 else
@@ -115,12 +125,16 @@ namespace Dictionaries
             }
             else
             {
+                //Handle Case Where the Course Does Not Exist
                 Console.WriteLine($"Course {courseCode} does not exist.");
             }
         }
-//******************************************************************************************************************
+        //******************************************************************************************************************
         static void EnrollStudentInCourse()
         {
+            // Display available courses and their capacities
+            DisplayCoursesAndCapacities();
+
             Console.WriteLine("Enter course code:");
             string courseCode = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(courseCode))
@@ -161,7 +175,9 @@ namespace Dictionaries
                 Console.WriteLine($"Course {courseCode} does not exist.");
             }
         }
-//*****************************************************************************************************************
+
+
+        //*****************************************************************************************************************
         static void RemoveStudentFromCourse()
         {
             Console.WriteLine("Enter course code:");
@@ -238,20 +254,22 @@ namespace Dictionaries
             }
         }
 
+        //************************************************************************************
+
         static void DisplayAllCoursesAndTheirStudents()
         {
             Console.WriteLine("All Courses and Enrolled Students:");
-            foreach (var course in courses)
+            foreach (var course in courses.Keys)
             {
-                Console.WriteLine($"Course: {course.Key}");
-                foreach (var student in course.Value)
+                Console.WriteLine($"Students enrolled in {course}:");
+                foreach (var student in courses[course])
                 {
-                    Console.WriteLine($"  - {student}");
+                    Console.WriteLine(student);
                 }
             }
         }
 
-//**********************************************************************************************
+        //**********************************************************************************************
         static void FindCoursesWithCommonStudents()
         {
             Console.WriteLine("Enter the first course code:");
@@ -273,7 +291,7 @@ namespace Dictionaries
             if (courses.ContainsKey(courseCode1) && courses.ContainsKey(courseCode2))
             {
                 HashSet<string> commonStudents = new HashSet<string>(courses[courseCode1]);
-                commonStudents.IntersectWith(courses[courseCode2]);
+                //commonStudents.IntersectWith(courses[courseCode2]);
 
                 if (commonStudents.Count > 0)
                 {
@@ -322,6 +340,26 @@ namespace Dictionaries
             {
                 Console.WriteLine($"Course: {course.Key}, Capacity: {course.Value}");
             }
+        }
+
+        static void InitializeStartupData()
+        {
+            // Example data: Courses and their enrolled students (cross-over students)
+            courses["CS101"] = new HashSet<string> { "Alice", "Bob", "Charlie" };   // CS101 has Alice, Bob, Charlie
+            courses["MATH202"] = new HashSet<string> { "David", "Eva", "Bob" };     // MATH202 has David, Eva, and Bob (cross-over with CS101)
+            courses["ENG303"] = new HashSet<string> { "Frank", "Grace", "Charlie" };// ENG303 has Frank, Grace, and Charlie (cross-over with CS101)
+            courses["BIO404"] = new HashSet<string> { "Ivy", "Jack", "David" };     // BIO404 has Ivy, Jack, and David (cross-over with MATH202)
+                                                                                    // Set course capacities (varying)
+            courseCapacity["CS101"] = 3;  // CS101 capacity of 3 (currently full)
+            courseCapacity["MATH202"] = 5; // MATH202 capacity of 5 (can accept more students)
+            courseCapacity["ENG303"] = 3;  // ENG303 capacity of 3 (currently full)
+            courseCapacity["BIO404"] = 4;  // BIO404 capacity of 4 (can accept more students)
+                                           // Waitlist for courses (students waiting to enroll in full courses)
+            WaitList.Add(("Helen", "CS101"));   // Helen waiting for CS101
+            WaitList.Add(("Jack", "ENG303"));   // Jack waiting for ENG303
+            WaitList.Add(("Alice", "BIO404"));  // Alice waiting for BIO404
+            WaitList.Add(("Eva", "ENG303"));    // Eva waiting for ENG303
+            Console.WriteLine("Startup data initialized.");
         }
 
     }
