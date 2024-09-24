@@ -288,11 +288,24 @@ namespace Dictionaries
                 return;
             }
 
+            // Check if both course codes exist in the dictionary
             if (courses.ContainsKey(courseCode1) && courses.ContainsKey(courseCode2))
             {
-                HashSet<string> commonStudents = new HashSet<string>(courses[courseCode1]);
-                //commonStudents.IntersectWith(courses[courseCode2]);
+                // List to store common students
+                List<string> commonStudents = new List<string>();
 
+                // Loop through the students in the first course
+                foreach (var student in courses[courseCode1])
+                {
+                    // Check if the student is also enrolled in the second course
+                    if (courses[courseCode2].Contains(student))
+                    {
+                        // Add to the common students list
+                        commonStudents.Add(student);
+                    }
+                }
+
+                // Display the common students
                 if (commonStudents.Count > 0)
                 {
                     Console.WriteLine($"Common students in {courseCode1} and {courseCode2}:");
@@ -312,7 +325,9 @@ namespace Dictionaries
             }
         }
 
-//***************************************************************************************************************
+
+
+        //***************************************************************************************************************
         static void WithdrawStudentFromAllCourses()
         {
             Console.WriteLine("Enter student name to withdraw:");
